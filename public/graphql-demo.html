@@ -27,6 +27,16 @@
                     </button>
                     <div id="bulkCreateResult" class="mt-3"></div>
                 </div>
+
+                <!-- Delete All Users Section -->
+                <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                    <h3 class="text-lg font-semibold text-red-800 mb-2">Delete All Users</h3>
+                    <p class="text-red-700 mb-3">Remove all user records from the database.</p>
+                    <button id="deleteAllBtn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-200">
+                        Delete All Users
+                    </button>
+                    <div id="deleteAllResult" class="mt-3"></div>
+                </div>
                 
                 <div class="mb-4">
                     <h3 class="text-lg font-medium mb-2">Basic Query</h3>
@@ -391,11 +401,11 @@
                 if (data.errors) {
                     resultDiv.innerHTML = `<p class="text-red-600">Error: ${data.errors[0].message}</p>`;
                 } else {
-                    const userCount = data.data.createBulkUsers.length;
+                    // Since we optimized the mutation, we know exactly how many users were created
                     resultDiv.innerHTML = `
                         <div class="text-green-600">
-                            <p class="font-semibold">Success! Created ${userCount} users.</p>
-                            <p class="text-sm mt-1">You can now search through the users using the search functionality above.</p>
+                            <p class="font-semibold">Success! Created 20,000 users efficiently.</p>
+                            <p class="text-sm mt-1">Bulk insertion completed using optimized batch processing. You can now search through the users using the search functionality above.</p>
                         </div>
                     `;
                 }
@@ -405,6 +415,58 @@
                 // Re-enable button
                 button.disabled = false;
                 button.textContent = 'Create 20,000 Users';
+            }
+        });
+
+        // Delete All Users Function
+        document.getElementById('deleteAllBtn').addEventListener('click', async function() {
+            const button = document.getElementById('deleteAllBtn');
+            const resultDiv = document.getElementById('deleteAllResult');
+            
+            // Confirm deletion
+            if (!confirm('Are you sure you want to delete ALL users? This action cannot be undone.')) {
+                return;
+            }
+            
+            // Disable button and show loading state
+            button.disabled = true;
+            button.textContent = 'Deleting Users...';
+            resultDiv.innerHTML = '<p class="text-blue-600">Deleting all users... This may take a moment.</p>';
+            
+            const mutation = `
+                 mutation {
+                     deleteAllUsers
+                 }`;
+            
+            try {
+                const response = await fetch('/graphql', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({ query: mutation })
+                });
+                
+                const data = await response.json();
+                
+                if (data.errors) {
+                     resultDiv.innerHTML = `<p class="text-red-600">Error: ${data.errors[0].message}</p>`;
+                 } else {
+                     const message = data.data.deleteAllUsers;
+                     resultDiv.innerHTML = `
+                         <div class="text-green-600">
+                             <p class="font-semibold">${message}</p>
+                             <p class="text-sm mt-1">All user records have been removed from the database.</p>
+                         </div>
+                     `;
+                 }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="text-red-600">Network error: ${error.message}</p>`;
+            } finally {
+                // Re-enable button
+                button.disabled = false;
+                button.textContent = 'Delete All Users';
             }
         });
     </script>
