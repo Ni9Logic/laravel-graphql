@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REST vs GraphQL Comparison</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen py-8">
+    <div class="max-w-7xl mx-auto px-4">
+        <h1 class="text-3xl font-bold text-gray-800 mb-8 text-center">REST vs GraphQL: Users List Comparison</h1>
+        
+        <div class="grid md:grid-cols-2 gap-8">
+            <!-- REST Approach -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-2xl font-semibold mb-4 text-blue-600">REST Approach</h2>
+                <div class="mb-4">
+                    <h3 class="text-lg font-medium mb-2">Current Implementation (Home Page)</h3>
+                    <div class="bg-gray-100 p-4 rounded-md mb-4">
+                        <pre class="text-sm">// Route: routes/web.php
+Route::get('/', function () {
+    $users = User::all();
+    return view('welcome', compact('users'));
+});
+
+// View: resources/views/welcome.blade.php
+@foreach($users as $user)
+    <!-- Display user data -->
+@endforeach</pre>
+                    </div>
+                    <a href="/" target="_blank" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors inline-block">
+                        View REST Implementation
+                    </a>
+                </div>
+                
+                <div class="border-t pt-4">
+                    <h3 class="text-lg font-medium mb-2">Characteristics</h3>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>• Server-side rendering</li>
+                        <li>• Full page reload</li>
+                        <li>• Fixed data structure</li>
+                        <li>• Simple implementation</li>
+                        <li>• SEO-friendly</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- GraphQL Approach -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-2xl font-semibold mb-4 text-green-600">GraphQL Approach</h2>
+                <div class="mb-4">
+                    <h3 class="text-lg font-medium mb-2">Query Example</h3>
+                    <div class="bg-gray-100 p-4 rounded-md mb-4">
+                        <pre class="text-sm">query {
+  users {
+    data {
+      id
+      name
+      email
+      created_at
+    }
+    paginatorInfo {
+      count
+      total
+    }
+  }
+}</pre>
+                    </div>
+                    <button id="fetchGraphQL" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md transition-colors mb-4">
+                        Fetch via GraphQL
+                    </button>
+                    
+                    <h3 class="text-lg font-medium mb-2">Mutation Example</h3>
+                    <div class="bg-gray-100 p-4 rounded-md mb-4">
+                        <pre class="text-sm">mutation {
+  createUser(
+    input: {
+      name: "John Doe"
+      email: "john@example.com"
+      password: "password123"
+    }
+  ) {
+    id
+    name
+    email
+    created_at
+  }
+}</pre>
+                    </div>
+                    <div class="space-y-2 mb-4">
+                        <input type="text" id="newUserName" placeholder="Full Name" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm">
+                        <input type="email" id="newUserEmail" placeholder="Email" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm">
+                        <input type="password" id="newUserPassword" placeholder="Password" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm">
+                    </div>
+                    <button id="createGraphQL" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors">
+                        Create via GraphQL
+                    </button>
+                </div>
+                
+                <div class="border-t pt-4">
+                    <h3 class="text-lg font-medium mb-2">Characteristics</h3>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>• Client-side rendering</li>
+                        <li>• No page reload</li>
+                        <li>• Flexible data selection</li>
+                        <li>• Single endpoint (/graphql)</li>
+                        <li>• Built-in pagination</li>
+                        <li>• Type-safe queries</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="mt-8 bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-semibold mb-4">GraphQL Results</h2>
+            <div id="graphqlResults" class="text-gray-600">
+                Click "Fetch via GraphQL" above to see the results
+            </div>
+        </div>
+
+        <!-- Comparison Table -->
+        <div class="mt-8 bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-semibold mb-4">Feature Comparison</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full border-collapse border border-gray-300">
+                    <thead>
+                        <tr class="bg-gray-50">
+                            <th class="border border-gray-300 px-4 py-2 text-left">Feature</th>
+                            <th class="border border-gray-300 px-4 py-2 text-left">REST</th>
+                            <th class="border border-gray-300 px-4 py-2 text-left">GraphQL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="border border-gray-300 px-4 py-2 font-medium">Data Fetching</td>
+                            <td class="border border-gray-300 px-4 py-2">Fixed structure, all fields</td>
+                            <td class="border border-gray-300 px-4 py-2">Flexible, request specific fields</td>
+                        </tr>
+                        <tr>
+                            <td class="border border-gray-300 px-4 py-2 font-medium">Endpoints</td>
+                            <td class="border border-gray-300 px-4 py-2">Multiple endpoints</td>
+                            <td class="border border-gray-300 px-4 py-2">Single endpoint (/graphql)</td>
+                        </tr>
+                        <tr>
+                            <td class="border border-gray-300 px-4 py-2 font-medium">Pagination</td>
+                            <td class="border border-gray-300 px-4 py-2">Manual implementation</td>
+                            <td class="border border-gray-300 px-4 py-2">Built-in with metadata</td>
+                        </tr>
+                        <tr>
+                            <td class="border border-gray-300 px-4 py-2 font-medium">Filtering</td>
+                            <td class="border border-gray-300 px-4 py-2">URL parameters</td>
+                            <td class="border border-gray-300 px-4 py-2">Query arguments</td>
+                        </tr>
+                        <tr>
+                            <td class="border border-gray-300 px-4 py-2 font-medium">Type Safety</td>
+                            <td class="border border-gray-300 px-4 py-2">Limited</td>
+                            <td class="border border-gray-300 px-4 py-2">Strong typing with schema</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('fetchGraphQL').addEventListener('click', async function() {
+            const resultsDiv = document.getElementById('graphqlResults');
+            resultsDiv.innerHTML = '<div class="text-green-500">Loading...</div>';
+            
+            try {
+                const response = await fetch('/graphql', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        query: `
+                            query {
+                                users {
+                                    data {
+                                        id
+                                        name
+                                        email
+                                        created_at
+                                    }
+                                    paginatorInfo {
+                                        count
+                                        currentPage
+                                        total
+                                    }
+                                }
+                            }
+                        `
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.errors) {
+                    resultsDiv.innerHTML = `<div class="text-red-500">Error: ${JSON.stringify(data.errors, null, 2)}</div>`;
+                } else {
+                    const users = data.data.users.data;
+                    const paginatorInfo = data.data.users.paginatorInfo;
+                    
+                    let html = `
+                        <div class="mb-4 p-4 bg-green-50 rounded-md">
+                            <h3 class="font-semibold text-green-800 mb-2">Query Response Metadata</h3>
+                            <div class="text-sm text-green-700">
+                                <div>Total Users: ${paginatorInfo.total}</div>
+                                <div>Current Page: ${paginatorInfo.currentPage}</div>
+                                <div>Count on Page: ${paginatorInfo.count}</div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    if (users.length === 0) {
+                        html += '<div class="text-gray-500">No users found</div>';
+                    } else {
+                        html += '<div class="grid gap-4">';
+                        users.forEach(user => {
+                            html += `
+                                <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-semibold">
+                                            ${user.name.charAt(0).toUpperCase()}
+                                        </div>
+                                        <div>
+                                            <div class="font-semibold text-gray-800">${user.name}</div>
+                                            <div class="text-gray-600">${user.email}</div>
+                                            <div class="text-sm text-gray-500">ID: ${user.id} | Joined: ${new Date(user.created_at).toLocaleDateString()}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        html += '</div>';
+                    }
+                    
+                    resultsDiv.innerHTML = html;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="text-red-500">Network Error: ${error.message}</div>`;
+            }
+        });
+
+        // Create User via GraphQL
+        document.getElementById('createGraphQL').addEventListener('click', async function() {
+            const resultsDiv = document.getElementById('graphqlResults');
+            const nameInput = document.getElementById('newUserName');
+            const emailInput = document.getElementById('newUserEmail');
+            const passwordInput = document.getElementById('newUserPassword');
+            
+            const name = nameInput.value.trim();
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+            
+            // Basic validation
+            if (!name || !email || !password) {
+                resultsDiv.innerHTML = '<div class="text-red-500">Please fill in all fields</div>';
+                return;
+            }
+            
+            if (password.length < 8) {
+                resultsDiv.innerHTML = '<div class="text-red-500">Password must be at least 8 characters</div>';
+                return;
+            }
+            
+            resultsDiv.innerHTML = '<div class="text-blue-500">Creating user...</div>';
+            
+            try {
+                const response = await fetch('/graphql', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                         query: `
+                             mutation {
+                                 createUser(
+                                     input: {
+                                         name: "${name}"
+                                         email: "${email}"
+                                         password: "${password}"
+                                     }
+                                 ) {
+                                     id
+                                     name
+                                     email
+                                     created_at
+                                 }
+                             }
+                         `
+                     })
+                });
+                
+                const data = await response.json();
+                
+                if (data.errors) {
+                    let errorMessage = 'Creation failed:';
+                    data.errors.forEach(error => {
+                        errorMessage += `<br>• ${error.message}`;
+                    });
+                    resultsDiv.innerHTML = `<div class="text-red-500">${errorMessage}</div>`;
+                } else {
+                    const user = data.data.createUser;
+                    resultsDiv.innerHTML = `
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <h3 class="font-semibold text-blue-800 mb-2">✅ User Created via GraphQL!</h3>
+                            <div class="text-blue-700">
+                                <div><strong>ID:</strong> ${user.id}</div>
+                                <div><strong>Name:</strong> ${user.name}</div>
+                                <div><strong>Email:</strong> ${user.email}</div>
+                                <div><strong>Created:</strong> ${new Date(user.created_at).toLocaleString()}</div>
+                            </div>
+                            <div class="mt-3 text-sm text-blue-600">
+                                💡 User created with a single GraphQL mutation!
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Clear form
+                    nameInput.value = '';
+                    emailInput.value = '';
+                    passwordInput.value = '';
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="text-red-500">Network Error: ${error.message}</div>`;
+            }
+        });
+    </script>
+</body>
+</html>
